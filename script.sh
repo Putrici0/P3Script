@@ -16,9 +16,32 @@ error() {
 }
 
 
-#######################
-# VERIFICACIÓN CLUSTER
-#######################
+#################################
+# VERIFICACIÓN VOL1_p3 (TAREA 1)
+#################################
+
+# Comprobacion que existe el Volumen en default y el nombre
+if virsh vol-list default | grep -q Vol1_p3; then
+    echo "Exito: El volumen Vol1_p3 existe"
+elif virsh vol-list default | grep -q Vol1_p3.img; then
+    echo "Exito: El volumen Vol1_p3 existe"
+else
+    error "No se encuentra el volumen Vol1_p3"
+fi
+
+# Comprobar el tipo de volumen
+tipo_vol1_p3=$(virsh vol-dumpxml Vol1_p3 --pool default | grep "format type" | tr -s ' ' | cut -c 16-18)
+[ "$nombre_cluster" == "raw" ] || error "Tipo de volumen incorrecto: $tipo_vol1_p3"
+echo "✅ Éxito: Tipo de Vol1_p3 correcto."
+
+# Comprobacion de tamaño del volumen
+tamano_vol1_p3=$(virsh vol-dumpxml Vol1_p3 --pool default | grep "capacity unit" | tr -s ' ' | cut -c 25-34)
+[ "$nombre_cluster" == "1073741824" ] || error "Tamaño incorrecto de Vol1_p3: $tamano_vol1_p3"
+echo "✅ Éxito: Tamaño de Vol1_p3 correcto."
+
+#################################
+# VERIFICACIÓN VOL1_p3 (TAREA 2)
+#################################
 
 verificar_redes_y_vm() {
 virsh start mvp5

@@ -1,0 +1,117 @@
+TO Do P3:
+
+---
+TAREA 1:
+• Nombre: Vol1_p3
+• Tipo: volumen virtual de disco tipo “raw”
+• Tamaño: 1 Gbyte
+• Ubicación: contenedor por defecto de volúmenes virtuales del sistema
+
+
+El nuevo volumen se deberá asociar a la máquina virtual mvp3 y conectarse al
+bus SATA de dicha máquina. Para verificar que el nuevo volumen está operativo
+en la máquina mvp3, deberá:
+• Crear en el volumen la partición número 1, estableciéndole un tamaño de
+512 Mbytes.
+• En la nueva partición creada, crear un sistema de archivos de tipo XFS.
+• En el sistema de archivos creado, crear un archivo de nombre test.txt.
+---
+
+---
+Tarea 2
+
+Para realizar esta tarea deberá crear una partición lógica nueva de 1GB. Para ello
+puede emplear la utilidad fdisk. Recuerda tomar nota de la partición creada y así
+evitar que puedas dañar la partición creada por otro estudiante. Dependiendo del
+laboratorio de trabajo, te podrás encontrar con dos configuraciones:
+• En los laboratorios LQ-C (E07) y LQ-D (E08), los equipos tienen un único
+disco y la nueva partición lógica se debe crear en la partición extendida que
+posee el disco (/dev/sda), donde se dispone de suficiente espacio libre
+
+La partición deberá
+aparecer en la máquina mvp3 como el disco sdb. Para verificar que el nuevo
+volumen sdb está operativo en la máquina mvp3, deberá:
+• Sin particionar el disco sdb, crear en dicho disco un sistema de archivos de
+tipo XTS.
+• En el sistema de archivos creado, crear un archivo de nombre test.txt
+---
+
+Tarea 3
+
+Para realizar esta tarea deberá crear una partición lógica nueva de 2GB.
+Una vez creada la partición, cree en ella un sistema de archivos de tipo ext4 y a
+continuación cree un contenedor con el nombre “Contenedor_Particion”. Este
+nuevo contenedor debe mapearse al directorio /var/lib/libvirt/Pool_Particion. 
+
+Una vez creado el contenedor de almacenamiento, crear un volumen nuevo en
+dicho contenedor llamado “Vol2_p3”, cumpliendo los siguientes requisitos:
+• Nombre: Vol2_p3
+• Tipo: volumen virtual de disco tipo “qcow2”
+• Tamaño: 1 Gbyte
+• Ubicación: en el contenedor “Contenedor_Particion”
+
+Añadir el nuevo volumen creado a la máquina mvp3 de forma que se pueda
+emplear como espacio de almacenamiento. Para ello, el nuevo volumen virtual
+de disco se debe añadir como volumen de disco paravirtualizado en la
+máquina mvp3, debiendo aparecer en dicha máquina como disco vdb. Para
+verificar que el nuevo volumen vdb está operativo en la máquina mvp3, deberá:
+• Sin particionar el disco vdb, crear en dicho disco un sistema de archivos de
+tipo XFS.
+• En el sistema de archivos creado, crear un archivo de nombre test.txt.
+Además, deberá realizar la configuración necesaria para que el volumen se monte
+de forma automática en el arranque de la máquina mvp3 en el directorio /VDB.
+
+---
+
+Tarea 4
+
+Los datos requeridos para agregar este nuevo
+contenedor de almacenamiento compartido al sistema anfitrión son los siguientes:
+• Nombre del contenedor: CONT_ISOS_COMP
+• Ruta del directorio local asociado al contenedor:
+/var/lib/libvirt/images/ISOS
+• Servidor NFS: disnas2.dis.ulpgc.es
+• Ruta del directorio exportado por el servidor NFS:
+/imagenes/fedora/41/isos/x86_64
+• El contenedor NO DEBE ACTIVARSE AUTOMÁTICAMENTE con el
+arranque del sistema.
+
+---
+
+Tarea 5
+
+Los
+datos requeridos para crear este nuevo contenedor de espacio de almacenamiento
+compartido son los siguientes:
+• Nombre del contenedor: CONT_VOL_COMP
+• Ruta del directorio local asociado al contenedor:
+/var/lib/libvirt/images/COMPARTIDO
+• Servidor NFS: disnas2.dis.ulpgc.es
+• Ruta del directorio exportado por el servidor NFS: /disnas2-itsi
+• El contenedor NO DEBE ACTIVARSE AUTOMÁTICAMENTE con el
+arranque del sistema.
+
+
+Deberá crear un volumen llamado “pcHOST_LQX_ANFITRIONY_Vol3_p3” en dicho
+contenedor de tamaño 1GB, de tipo “qcow2”. Añadir el nuevo volumen creado a la
+máquina mvp3 como volumen de disco paravirtualizado, debiendo aparecer
+en la máquina mvp3 como el disco vdc. Para verificar que el nuevo volumen vdc
+está operativo en la máquina mvp3, deberá:
+• Sin particionar el disco vdc, crear en dicho disco un sistema de archivos de
+tipo XFS.
+• En el sistema de archivos creado, crear un archivo de nombre test.txt
+
+Además, deberá realizar la configuración necesaria para que el volumen se monte
+de forma automática en el arranque de la máquina mvp3 en el directorio /VDC.
+
+nombre del volumen -> pcHOST_LQX_ANFITRIONY_Vol3_p3
+
+---
+
+CHECKLIST
+
+Verificación de que el espacio de almacenamiento definido en cada apartado
+es accesible desde la máquina mvp3 y que se ha almacenado información
+en dicho espacio de almacenamiento.
+
+---

@@ -54,6 +54,31 @@ else
     error "No se ha asociado el volumen Vol1_p3 al bus SATA."
 fi
 
+#################################
+# VERIFICACIÓN VOL2_p3 (TAREA 3)
+#################################
+
+# Comprobacion de nombre de vol2_p3
+if virsh vol-dumpxml --vol /var/lib/libvirt/Pool_Particion/Vol2_p3.qcow2 | grep name | cut -c 9-21 | grep Vol2_p3.qcow2 >/dev/null 2>&1; then
+    echo "✅ Éxito: El volumen Vol2_p3.qcow2 se llama Vol2_p3.qcow2"
+else
+    error "El volumen Vol2_p3 no se llama de la forma correcta."
+fi
+    
+# Comprobacion de tipo de volumen de vol2_p3
+if virsh vol-dumpxml --vol /var/lib/libvirt/Pool_Particion/Vol2_p3.qcow2 | grep format | cut -c 19-23 | grep qcow2 >/dev/null 2>&1; then
+    echo "✅ Éxito: El volumen Vol2_p3.qcow2 es de tipo qcow2"
+else
+    error "El volumen tipo de volumen de Vol2_p3 es incorrecto."
+fi
+    
+# Comprobacion del tamaño del volumen vol2_p3
+if virsh vol-dumpxml --vol /var/lib/libvirt/Pool_Particion/Vol2_p3.qcow2 | grep capacity | cut -c 26-35 | grep 1073741824 >/dev/null 2>&1; then
+    echo "✅ Éxito: El volumen Vol2_p3.qcow2 es de exactamente 1GB"
+else
+    error "El volumen tamaño de Vol2_p3 es incorrecto."
+fi
+
 
 
 
@@ -126,7 +151,32 @@ else
     error "El fichero text.txt no se encuentra dentro del sistema de ficheros."
 fi
 
+#################################
+# VERIFICACIÓN VOL1_p3 (TAREA 3) PT.2
+#################################
 
+
+# Comprobacion de sistema de ficheros de vdb XFS
+if lsblk -f | grep vdb | cut -c 17-19 | grep xfs >/dev/null 2>&1; then
+    echo "✅ Éxito: El sistema de ficheros del Vol2_p3 es de tipo xfs"
+else
+    error "El sistema de ficheros de vdb no es de tipo xfs."
+fi
+
+# Comprobacion de montaje del vdb
+if lsblk -f | grep vdb | cut -c 98-105 | grep /mnt/VDB >/dev/null 2>&1; then
+    echo "✅ Éxito: El sistema de ficheros está montado en /mnt/VDB, Vol2_p3"
+else
+    error "El sistema de ficheros no está montado en /mnt/VDB."
+fi
+
+
+# Comprobacion del fichero test.txt en /mnt/VDB
+if ls /mnt/VDB | grep test.txt >/dev/null 2>&1; then
+    echo "✅ Éxito: El sistema de ficheros contiene test.txt, Vol2_p3"
+else
+    error "El sistema de ficheros no contiene test.txt."
+fi
 
 
 echo "Fin de comprobaciones."

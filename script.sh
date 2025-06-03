@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 # Nombre de la VM y usuario SSH
@@ -18,7 +17,7 @@ error() {
 verificar_redes_y_vm() {
 virsh start mvp3
 echo "Iniciando la máquina virtual 'mvp3', por favor espere 30 segundos..."
-sleep 10
+sleep 15
 
 
 #################################
@@ -26,7 +25,7 @@ sleep 10
 #################################
 
 # Comprobacion que existe el Volumen en default y el nombre
-if virsh vol-list default | grep -q Vol1_p3; then
+if virsh vol-list default | grep -q Vol1_p3 >/dev/null 2>&1; then
     echo "Exito: El volumen Vol1_p3 existe"
 elif virsh vol-list default | grep -q Vol1_p3.img; then
     echo "Exito: El volumen Vol1_p3 existe"
@@ -36,7 +35,7 @@ fi
 
 # Comprobar el tipo de volumen
 tipo_vol1_p3=$(virsh vol-dumpxml Vol1_p3 --pool default | grep "format type" | tr -s ' ' | cut -c 16-18)
-[ "$nombre_cluster" == "raw" ] || error "Tipo de volumen incorrecto: $tipo_vol1_p3"
+[ "$tipo_vol1_p3" == "raw" ] || error "Tipo de volumen incorrecto: $tipo_vol1_p3"
 echo "✅ Éxito: Tipo de Vol1_p3 correcto."
 
 # Comprobacion de tamaño del volumen
@@ -45,26 +44,16 @@ tamano_vol1_p3=$(virsh vol-dumpxml Vol1_p3 --pool default | grep "capacity unit"
 echo "✅ Éxito: Tamaño de Vol1_p3 correcto."
 
 #################################
-# VERIFICACIÓN VOL1_p3 (TAREA 2)
+# VERIFICACIÓN VOL1_p3 (TAREA 1) PT.2
 #################################
 
 # Comprobacion de Vol1_p3 a SATA
-if virsh dumpxml mvp3 | grep -A 5 "Vol1_p3" | grep sata; then
+if virsh dumpxml mvp3 | grep -A 5 "Vol1_p3" | grep sata >/dev/null 2>&1; then
     echo "✅ Éxito: El volumen  Vol1_p3 esta correctamente asociado al bus SATA."
 else
     error "No se ha asociado el volumen Vol1_p3 al bus SATA."
+fi
 
-# Comprobacion de que se ha creado una particion en sda
-if lsblk /dev/sda --noheadings | grep "512M"; then
-    echo "✅ Éxito: La particion de 512M en Vol1_p3 es correcta."
-else
-    error "No es correcta la particion de 512M en Vol1_p3."
-
-# Comprobacion de que se ha creado una particion en sda
-if lsblk -f /dev/sda | grep "xfs"; then
-    echo "✅ Éxito: La particion de 512M en Vol1_p3 tiene un sistema de ficheros XFS."
-else
-    error "La particion de 512M en Vol1_p3 no tiene un sistema de ficheros XFS."
 
 
 
@@ -72,7 +61,6 @@ else
 #############################
 # VERIFICACIÓN DE CONECTIVIDAD
 #############################
-echo "== Comprobación de conectividad =="
 
 check_ping() {
     destino=$1
@@ -98,14 +86,52 @@ check_ping() {
 #############################
 VM_IP=$(virsh domifaddr "$VM_NAME" | awk '/ipv4/ {split($4, a, "/"); print a[1]}')
 [ -n "$VM_IP" ] || error "No se pudo obtener la IP de la máquina virtual $VM_NAME"
+
 ssh ${VM_USER}@${VM_IP} << 'EOF'
+
+error() {
+    echo "ERROR: $1"
+    shutdown now
+    exit 1
+}
+
+
+#################################
+# VERIFICACIÓN VOL1_p3 (TAREA 1) PT.3
+#################################
+
+# Comprobacion de que se ha creado una particion en sda
+if lsblk /dev/sda --noheadings | grep "512M" >/dev/null 2>&1; then
+    echo "✅ Éxito: La particion de 512M en Vol1_p3 es correcta."
+else
+    error "No es correcta la particion de 512M en Vol1_p3."
+fi
+
+
+# Comprobacion de que se ha creado una particion en sda
+if lsblk -f /dev/sda | grep "xfs" >/dev/null 2>&1; then
+    echo "✅ Éxito: La particion de 512M en Vol1_p3 tiene un sistema de ficheros XFS."
+else
+    error "La particion de 512M en Vol1_p3 no tiene un sistema de ficheros XFS."
+fi
+
+
+# Comprobar que el fichero test.txt esta dentro del sistema de Vol1_p3
+mount /dev/sda1 /mnt/
+if ls /mnt | grep "test.txt" >/dev/null 2>&1; then
+    echo "✅ Éxito: El fichero text.txt se encuentra dentro del sistema de ficheros."
+    umount /mnt/
+else
+    umount /mnt/
+    error "El fichero text.txt no se encuentra dentro del sistema de ficheros."
+fi
+
+
+
 
 echo "Fin de comprobaciones."
 EOF
 
-#############################
-# COMPROBACIÓN XML DE VM
-#############################
 
 virsh shutdown mvp3
 exit 0

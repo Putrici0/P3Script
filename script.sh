@@ -121,6 +121,44 @@ else
     error "El volumen tamaño de Vol2_p3 es incorrecto."
 fi
 
+#################################
+# VERIFICACIÓN CONT_ISOS_COMP (TAREA 4)
+#################################
+
+# Comprobacion de nombre de CONT_ISOS_COMP
+if virsh pool-dumpxml CONT_ISOS_COMP | grep "<name>" | cut -c 9-22 | grep CONT_ISOS_COMP >/dev/null 2>&1; then
+    echo "✅ Éxito: El contenedor CONT_ISOS_COMP se llama CONT_ISOS_COMP"
+else
+    error "El contenedor CONT_ISOS_COMP no se llama de la forma correcta."
+fi
+
+# Comprobacion de la ruta de CONT_ISOS_COMP
+if virsh pool-dumpxml CONT_ISOS_COMP | grep "<path>" | cut -c 11-38 | grep /var/lib/libvirt/images/ISOS >/dev/null 2>&1; then
+    echo "✅ Éxito: La ruta del CONT_ISOS_COMP es var/lib/libvirt/images/ISOS"
+else
+    error "El contenedor CONT_ISOS_COMP no se encuentra en la ruta correcta."
+fi
+
+# Comprobacion del servidor NFS
+if virsh pool-dumpxml CONT_ISOS_COMP | grep "name=" | cut -c 17-36 | grep disnas2.dis.ulpgc.es >/dev/null 2>&1; then
+    echo "✅ Éxito: El servidor NFS es disnas2.dis.ulpgc.es"
+else
+    error "El servidor NFS es incorrecto."
+fi
+
+# Comprobacion de la ruta del servidor NFS
+if virsh pool-dumpxml CONT_ISOS_COMP | grep dir | cut -c 16-46 | grep /imagenes/fedora/41/isos/x86_64 >/dev/null 2>&1; then
+    echo "✅ Éxito: La ruta del servidor NFS es imagenes/fedora/41/isos/x86_64"
+else
+    error "La ruta del servidor NFS es incorrecta."
+fi
+
+# Comprobacion del autoarranque de CONT_ISOS_COMP
+if virsh pool-info CONT_ISOS_COMP | grep Autoinicio | cut -c 16-18 | grep no >/dev/null 2>&1; then
+    echo "✅ Éxito: El autoinicio está descativado para CONT_ISOS_COMP"
+else
+    error "El autoinicio está activado para CONT_ISOS_COMP."
+fi
 
 #############################
 # VERIFICACIÓN DE CONECTIVIDAD

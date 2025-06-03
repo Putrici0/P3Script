@@ -61,16 +61,15 @@ de forma automática en el arranque de la máquina mvp3 en el directorio /VDB. -
 
 Tarea 4
 
-Los datos requeridos para agregar este nuevo
-contenedor de almacenamiento compartido al sistema anfitrión son los siguientes:
-• Nombre del contenedor: CONT_ISOS_COMP
+Los datos requeridos para agregar este nuevo contenedor de almacenamiento compartido al sistema anfitrión son los siguientes:
+• Nombre del contenedor: CONT_ISOS_COMP -> virsh pool-dumpxml CONT_ISOS_COMP | grep "<name>" | cut -c 9-22
 • Ruta del directorio local asociado al contenedor:
-/var/lib/libvirt/images/ISOS
-• Servidor NFS: disnas2.dis.ulpgc.es
-• Ruta del directorio exportado por el servidor NFS:
+/var/lib/libvirt/images/ISOS -> virsh pool-dumpxml CONT_ISOS_COMP | grep "<path>" | cut -c 11-38
+• Servidor NFS: disnas2.dis.ulpgc.es -> virsh pool-dumpxml CONT_ISOS_COMP | grep "name=" | cut -c 17-36
+• Ruta del directorio exportado por el servidor NFS: -> virsh pool-dumpxml CONT_ISOS_COMP | grep dir | cut -c 16-46
 /imagenes/fedora/41/isos/x86_64
-• El contenedor NO DEBE ACTIVARSE AUTOMÁTICAMENTE con el
-arranque del sistema.
+• El contenedor NO DEBE ACTIVARSE AUTOMÁTICAMENTE con el arranque del sistema. 
+-> virsh pool-info CONT_ISOS_COMP | grep Autoinicio | cut -c 16-18
 
 ---
 

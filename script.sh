@@ -15,6 +15,11 @@ error() {
     exit 1
 }
 
+verificar_redes_y_vm() {
+virsh start mvp3
+echo "Iniciando la máquina virtual 'mvp3', por favor espere 30 segundos..."
+sleep 10
+
 
 #################################
 # VERIFICACIÓN VOL1_p3 (TAREA 1)
@@ -36,17 +41,33 @@ echo "✅ Éxito: Tipo de Vol1_p3 correcto."
 
 # Comprobacion de tamaño del volumen
 tamano_vol1_p3=$(virsh vol-dumpxml Vol1_p3 --pool default | grep "capacity unit" | tr -s ' ' | cut -c 25-34)
-[ "$nombre_cluster" == "1073741824" ] || error "Tamaño incorrecto de Vol1_p3: $tamano_vol1_p3"
+[ "$tamano_vol1_p3" == "1073741824" ] || error "Tamaño incorrecto de Vol1_p3: $tamano_vol1_p3"
 echo "✅ Éxito: Tamaño de Vol1_p3 correcto."
 
 #################################
 # VERIFICACIÓN VOL1_p3 (TAREA 2)
 #################################
 
-verificar_redes_y_vm() {
-virsh start mvp5
-echo "Iniciando la máquina virtual 'mvp3', por favor espere 30 segundos..."
-sleep 40
+# Comprobacion de Vol1_p3 a SATA
+if virsh dumpxml mvp3 | grep -A 5 "Vol1_p3" | grep sata; then
+    echo "✅ Éxito: El volumen  Vol1_p3 esta correctamente asociado al bus SATA."
+else
+    error "No se ha asociado el volumen Vol1_p3 al bus SATA."
+
+# Comprobacion de que se ha creado una particion en sda
+if lsblk /dev/sda --noheadings | grep "512M"; then
+    echo "✅ Éxito: La particion de 512M en Vol1_p3 es correcta."
+else
+    error "No es correcta la particion de 512M en Vol1_p3."
+
+# Comprobacion de que se ha creado una particion en sda
+if lsblk -f /dev/sda | grep "xfs"; then
+    echo "✅ Éxito: La particion de 512M en Vol1_p3 tiene un sistema de ficheros XFS."
+else
+    error "La particion de 512M en Vol1_p3 no tiene un sistema de ficheros XFS."
+
+
+
 
 #############################
 # VERIFICACIÓN DE CONECTIVIDAD

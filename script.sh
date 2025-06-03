@@ -11,13 +11,42 @@ xml="/etc/libvirt/qemu/mvp3.xml"
 error() {
     echo "ERROR: $1"
     virsh shutdown mvp3
+    virsh pool-destroy CONT_VOL_COMP
     exit 1
 }
 
+
+
+
 verificar_redes_y_vm() {
-virsh start mvp3
-echo "Iniciando la máquina virtual 'mvp3', por favor espere 30 segundos..."
-sleep 15
+
+#################################
+# VERIFICACIÓN VOL1_p3 (TAREA 1)
+#################################
+
+estado_pool=$(virsh pool-info CONT_VOL_COMP 2>/dev/null | grep -i Estado | awk '{print $2}')
+if [[ "$estado_pool" != "ejecutando" ]]; then
+    virsh pool-start CONT_VOL_COMP &> /dev/null || error "No se pudo iniciar el contenedor CONT_VOL_COMP"
+    echo "✅ Contenedor CONT_VOL_COMP iniciado correctamente."
+else
+    echo "ERROR: El contenedor CONT_VOL_COMP ya estaba activo."
+    exit 1
+fi
+
+
+
+echo "Iniciando la máquina virtual 'mvp3', por favor espere 15 segundos..."
+estado_vm=$(virsh domstate mvp3 2>/dev/null)
+if [[ "$estado_vm" != "encendido" ]]; then
+    virsh start mvp3 &> /dev/null || error "No se pudo iniciar la máquina virtual mvp3"
+    sleep 15
+else
+    echo "ERROR: La máquina virtual mvp3 ya estaba encendida."
+fi
+
+
+
+
 
 
 #################################
@@ -28,7 +57,7 @@ sleep 15
 if virsh vol-list default | grep -q Vol1_p3 >/dev/null 2>&1; then
     echo "Exito: El volumen Vol1_p3 existe"
 elif virsh vol-list default | grep -q Vol1_p3.img; then
-    echo "Exito: El volumen Vol1_p3 existe"
+    echo "✅ Éxito: El volumen Vol1_p3 existe"
 else
     error "No se encuentra el volumen Vol1_p3"
 fi
@@ -55,6 +84,19 @@ else
 fi
 
 #################################
+# VERIFICACIÓN PARTICION (TAREA 2) PT.1
+#################################
+
+particion_conectada=$(virsh dumpxml mvp3 | tr -s ' ' | grep sda | wc -l)
+
+# Comprobacion de conexcion de la particion del anfitrion a la maquina
+if [ $particion_conectada == "2" ]; then
+    echo "✅ Éxito: La particion esta conectada a la máquina."
+else
+    error "La particion no se encuentra conectada a la máquina."
+fi
+
+#################################
 # VERIFICACIÓN VOL2_p3 (TAREA 3)
 #################################
 
@@ -78,9 +120,6 @@ if virsh vol-dumpxml --vol /var/lib/libvirt/Pool_Particion/Vol2_p3.qcow2 | grep 
 else
     error "El volumen tamaño de Vol2_p3 es incorrecto."
 fi
-
-
-
 
 
 #############################
@@ -152,6 +191,35 @@ else
 fi
 
 #################################
+# VERIFICACIÓN PARTICION ANFITRION (TAREA 2) PT.2
+#################################
+
+# Comprobacion de que aparece como sdb en la máquina virtual
+if lsblk /dev/sdb --noheadings | grep 1G >/dev/null 2>&1; then
+    echo "✅ Éxito: La particion aparece en la máquina virtual con el tamaño adecuado y como sdb."
+else
+    error "La particion no aparece en la máquina virtual con el tamaño adecuado y como sdb."
+fi
+
+# Comprobacion de sistema de ficheros de sdb XFS
+if lsblk /dev/sdb -f --noheadings | grep xfs >/dev/null 2>&1; then
+    echo "✅ Éxito: El sistema de ficheros del SDB es de tipo xfs"
+else
+    error "El sistema de ficheros de SDB no es de tipo xfs."
+fi
+
+# Comprobar que el fichero test.txt esta dentro del sistema de sdb
+mount /dev/sdb /mnt/
+if ls /mnt | grep "test.txt" >/dev/null 2>&1; then
+    echo "✅ Éxito: El fichero text.txt se encuentra dentro del sistema de ficheros."
+    umount /mnt/
+else
+    umount /mnt/
+    error "El fichero text.txt no se encuentra dentro del sistema de ficheros."
+fi
+
+
+#################################
 # VERIFICACIÓN VOL1_p3 (TAREA 3) PT.2
 #################################
 
@@ -184,6 +252,9 @@ EOF
 
 
 virsh shutdown mvp3
+sleep 5
+echo "Apagando la máquina 'mvp3'"
+virsh pool-destroy CONT_VOL_COMP
 exit 0
 }
 

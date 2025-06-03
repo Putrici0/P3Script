@@ -38,25 +38,24 @@ tipo XTS.
 
 Tarea 3
 
-Este nuevo contenedor debe mapearse al directorio /var/lib/libvirt/Pool_Particion. -> virsh pool-dumpxml --pool Contenedor_Particion
-
 Una vez creado el contenedor de almacenamiento, crear un volumen nuevo en
 dicho contenedor llamado “Vol2_p3”, cumpliendo los siguientes requisitos: -> virsh vol-dumpxml --vol /var/lib/libvirt/Pool_Particion/Vol2_p3.qcow2 --pool Contenedor_Particion
-• Nombre: Vol2_p3
-• Tipo: volumen virtual de disco tipo “qcow2”
-• Tamaño: 1 Gbyte
+• Nombre: Vol2_p3 -> virsh vol-dumpxml --vol /var/lib/libvirt/Pool_Particion/Vol2_p3.qcow2 | grep name | cut -c 9-21
+• Tipo: volumen virtual de disco tipo “qcow2” -> virsh vol-dumpxml --vol /var/lib/libvirt/Pool_Particion/Vol2_p3.qcow2 | grep format | cut -c 19-23
+
+• Tamaño: 1 Gbyte -> virsh vol-dumpxml --vol /var/lib/libvirt/Pool_Particion/Vol2_p3.qcow2 | grep capacity | cut -c 26-35 | grep 1073741824
 • Ubicación: en el contenedor “Contenedor_Particion”
 
 Añadir el nuevo volumen creado a la máquina mvp3 de forma que se pueda
 emplear como espacio de almacenamiento. Para ello, el nuevo volumen virtual
 de disco se debe añadir como volumen de disco paravirtualizado en la
-máquina mvp3, debiendo aparecer en dicha máquina como disco vdb. -> lsblk -f
+máquina mvp3, debiendo aparecer en dicha máquina como disco vdb. -> (mediante ssh) lsblk -f
 Para verificar que el nuevo volumen vdb está operativo en la máquina mvp3, deberá:
 • Sin particionar el disco vdb, crear en dicho disco un sistema de archivos de
-tipo XFS.
-• En el sistema de archivos creado, crear un archivo de nombre test.txt. -> ls /mnt/VDB
+tipo XFS.-> lsblk -f | grep vdb | cut -c 17-19
+• En el sistema de archivos creado, crear un archivo de nombre test.txt. -> ls /mnt/VDB | grep test.txt
 Además, deberá realizar la configuración necesaria para que el volumen se monte
-de forma automática en el arranque de la máquina mvp3 en el directorio /VDB.
+de forma automática en el arranque de la máquina mvp3 en el directorio /VDB. -> lsblk -f | grep vdb | cut -c 98-105
 
 ---
 

@@ -19,7 +19,7 @@ fi
 
 # Construir nombre del volumen
 VOLUMEN="pc${HOST_NUM}_LQ${HOST_LETTER}_ANFITRION${GRADO}_Vol3_p3"
-
+echo $VOLUMEN
 # Función para mostrar errores
 error() {
     echo "ERROR: $1"
@@ -48,7 +48,7 @@ echo "Iniciando la máquina virtual 'mvp3', por favor espere 15 segundos..."
 estado_vm=$(virsh domstate mvp3 2>/dev/null)
 if [[ "$estado_vm" != "encendido" ]]; then
     virsh start mvp3 &> /dev/null || error "No se pudo iniciar la máquina virtual mvp3"
-    sleep 15
+    sleep 20
 else
     echo "ERROR: La máquina virtual mvp3 ya estaba encendida."
 fi
@@ -381,7 +381,7 @@ EOF
 
 
 virsh shutdown mvp3
-sleep 5
+sleep 10
 echo "Apagando la máquina 'mvp3'"
 virsh pool-destroy CONT_VOL_COMP
 exit 0
@@ -412,7 +412,7 @@ if [[ "$1" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     fi
 
     # Ejecutar el script en el remoto con el flag "local"
-    ssh "$remote_host" "bash /tmp/$(basename "$0") local"
+    ssh "$remote_host" "bash /tmp/$(basename "$0") local $2"
     exit 0
 fi
 

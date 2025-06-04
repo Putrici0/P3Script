@@ -59,21 +59,19 @@ fi
 
 # Comprobacion que existe el Volumen en default y el nombre
 if virsh vol-list default | grep Vol1_p3 >/dev/null 2>&1; then
-echo virsh vol-list default
-    echo "✅ Éxito: El volumen Vol1_p3 existe"
-elif virsh vol-list default | grep Vol1_p3.img; then
+    VOLUMEN_REAL_VOL1=$(virsh vol-list --pool default | grep Vol1_p3 | tr -s ' ' | cut -d' ' -f2)
     echo "✅ Éxito: El volumen Vol1_p3 existe"
 else
     error "No se encuentra el volumen Vol1_p3"
 fi
 
 # Comprobar el tipo de volumen
-tipo_vol1_p3=$(virsh vol-dumpxml Vol1_p3 --pool default | grep "format type" | tr -s ' ' | cut -c 16-18)
+tipo_vol1_p3=$(virsh vol-dumpxml $VOLUMEN_REAL_VOL1 --pool default | grep "format type" | tr -s ' ' | cut -c 16-18)
 [ "$tipo_vol1_p3" == "raw" ] || error "Tipo de volumen incorrecto: $tipo_vol1_p3"
 echo "✅ Éxito: Tipo de Vol1_p3 correcto."
 
 # Comprobacion de tamaño del volumen
-tamano_vol1_p3=$(virsh vol-dumpxml Vol1_p3 --pool default | grep "capacity unit" | tr -s ' ' | cut -c 25-34)
+tamano_vol1_p3=$(virsh vol-dumpxml $VOLUMEN_REAL_VOL1 --pool default | grep "capacity unit" | tr -s ' ' | cut -c 25-34)
 [ "$tamano_vol1_p3" == "1073741824" ] || error "Tamaño incorrecto de Vol1_p3: $tamano_vol1_p3"
 echo "✅ Éxito: Tamaño de Vol1_p3 correcto."
 
@@ -82,7 +80,7 @@ echo "✅ Éxito: Tamaño de Vol1_p3 correcto."
 #################################
 
 # Comprobacion de Vol1_p3 a SATA
-if virsh dumpxml mvp3 | grep -A 5 "Vol1_p3" | grep sata >/dev/null 2>&1; then
+if virsh dumpxml mvp3 | grep -A 5 $VOLUMEN_REAL_VOL1 | grep sata >/dev/null 2>&1; then
     echo "✅ Éxito: El volumen  Vol1_p3 esta correctamente asociado al bus SATA."
 else
     error "No se ha asociado el volumen Vol1_p3 al bus SATA."
@@ -207,25 +205,25 @@ else
 fi
 
 # Comprobacion de tamaño del volumen
-VOLUMEN_REAL=$(virsh vol-list --pool CONT_VOL_COMP | grep $VOLUMEN | tr -s ' ' | cut -d' ' -f2)
-if virsh vol-dumpxml --vol /var/lib/libvirt/images/COMPARTIDO/$VOLUMEN_REAL --pool CONT_VOL_COMP | grep 1073741824 >/dev/null 2>&1; then
+VOLUMEN_REAL_PC=$(virsh vol-list --pool CONT_VOL_COMP | grep $VOLUMEN | tr -s ' ' | cut -d' ' -f2)
+if virsh vol-dumpxml --vol /var/lib/libvirt/images/COMPARTIDO/$VOLUMEN_REAL_PC --pool CONT_VOL_COMP | grep 1073741824 >/dev/null 2>&1; then
     echo "✅ Éxito: El tamaño de pcXXXXXX_LQX_VOL3"
 else
     error "El tamaño de pcXXXXXX_LQX_VOL3 es incorrecto."
 fi
-    
+
 # Comprobacion de tipo del volumen
-if virsh vol-dumpxml --vol /var/lib/libvirt/images/COMPARTIDO/$VOLUMEN_REAL --pool CONT_VOL_COMP | grep format | grep qcow2 >/dev/null 2>&1; then
+if virsh vol-dumpxml --vol /var/lib/libvirt/images/COMPARTIDO/$VOLUMEN_REAL_PC --pool CONT_VOL_COMP | grep format | grep qcow2 >/dev/null 2>&1; then
     echo "✅ Éxito: El volumen Vol2_p3.qcow2 es de tipo qcow2"
 else
     error "El volumen tipo de volumen de Vol2_p3 es incorrecto."
 fi
     
 # Comprobacion de nombre del volumen
-if virsh vol-dumpxml --vol /var/lib/libvirt/images/COMPARTIDO/$VOLUMEN_REAL --pool CONT_VOL_COMP | grep name | grep $VOLUMEN >/dev/null 2>&1; then
-    echo "✅ Éxito: El volumen $VOLUMEN_REAL se llama de forma correcta."
+if virsh vol-dumpxml --vol /var/lib/libvirt/images/COMPARTIDO/$VOLUMEN_REAL_PC --pool CONT_VOL_COMP | grep name | grep $VOLUMEN >/dev/null 2>&1; then
+    echo "✅ Éxito: El volumen $VOLUMEN_REAL_PC se llama de forma correcta."
 else
-    error "El volumen $VOLUMEN_REAL no tiene el nombre requerido."
+    error "El volumen $VOLUMEN_REAL_PC no tiene el nombre requerido."
 fi
 
 #############################

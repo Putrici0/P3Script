@@ -237,7 +237,6 @@ ssh ${VM_USER}@${VM_IP} << 'EOF'
 error() {
     echo "ERROR: $1"
     shutdown now
-    exit 1
 }
 
 

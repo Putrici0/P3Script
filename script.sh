@@ -103,24 +103,24 @@ fi
 # VERIFICACIÓN VOL2_p3 (TAREA 3)
 #################################
 
-# Comprobacion que existe el Volumen en default y el nombre
-if virsh vol-list Contenedor_Particion | grep Vol2_p3 >/dev/null 2>&1; then
-    echo "✅ Éxito: El volumen Vol2_p3 existe"
-elif virsh vol-list Contenedor_Particion | grep Vol2_p3.qcow2; then
-    echo "✅ Éxito: El volumen Vol2_p3 existe"
+VOLUMEN_REAL_VOL2=$(virsh vol-list --pool Contenedor_Particion | grep Vol2_p3 | tr -s ' ' | cut -d' ' -f2)
+
+# Comprobacion de nombre del volumen
+if virsh vol-dumpxml --vol /var/lib/libvirt/Pool_Particion/$VOLUMEN_REAL_VOL2 --pool Contenedor_Particion | grep name | grep Vol2_p3 >/dev/null 2>&1; then
+    echo "✅ Éxito: El volumen $VOLUMEN_REAL se llama de forma correcta."
 else
-    error "No se encuentra el volumen Vol2_p3"
+    error "El volumen $VOLUMEN_REAL no tiene el nombre requerido."
 fi
     
 # Comprobacion de tipo de volumen de vol2_p3
-if virsh vol-dumpxml --vol /var/lib/libvirt/Pool_Particion/Vol2_p3.qcow2 | grep format | grep qcow2 >/dev/null 2>&1; then
+if virsh vol-dumpxml --vol /var/lib/libvirt/Pool_Particion/$VOLUMEN_REAL_VOL2 | grep format | grep qcow2 >/dev/null 2>&1; then
     echo "✅ Éxito: El volumen Vol2_p3.qcow2 es de tipo qcow2"
 else
     error "El tipo de volumen de Vol2_p3 es incorrecto."
 fi
     
 # Comprobacion del tamaño del volumen vol2_p3
-if virsh vol-dumpxml --vol /var/lib/libvirt/Pool_Particion/Vol2_p3.qcow2 | grep capacity | grep 1073741824 >/dev/null 2>&1; then
+if virsh vol-dumpxml --vol /var/lib/libvirt/Pool_Particion/$VOLUMEN_REAL_VOL2 | grep capacity | grep 1073741824 >/dev/null 2>&1; then
     echo "✅ Éxito: El volumen Vol2_p3.qcow2 es de exactamente 1GB"
 else
     error "El tamaño de Vol2_p3 es incorrecto."

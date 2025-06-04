@@ -19,7 +19,6 @@ fi
 
 # Construir nombre del volumen
 VOLUMEN="pc${HOST_NUM}_LQ${HOST_LETTER}_ANFITRION${GRADO}_Vol3_p3"
-echo $VOLUMEN
 # Función para mostrar errores
 error() {
     echo "ERROR: $1"
@@ -44,7 +43,7 @@ else
 fi
 
 
-echo "Iniciando la máquina virtual 'mvp3', por favor espere 15 segundos..."
+echo "Iniciando la máquina virtual 'mvp3', por favor espere 20 segundos..."
 estado_vm=$(virsh domstate mvp3 2>/dev/null)
 if [[ "$estado_vm" != "encendido" ]]; then
     virsh start mvp3 &> /dev/null || error "No se pudo iniciar la máquina virtual mvp3"
@@ -59,9 +58,10 @@ fi
 #################################
 
 # Comprobacion que existe el Volumen en default y el nombre
-if virsh vol-list default | grep -q Vol1_p3 >/dev/null 2>&1; then
-    echo "Exito: El volumen Vol1_p3 existe"
-elif virsh vol-list default | grep -q Vol1_p3.img; then
+if virsh vol-list default | grep Vol1_p3 >/dev/null 2>&1; then
+echo virsh vol-list default
+    echo "✅ Éxito: El volumen Vol1_p3 existe"
+elif virsh vol-list default | grep Vol1_p3.img; then
     echo "✅ Éxito: El volumen Vol1_p3 existe"
 else
     error "No se encuentra el volumen Vol1_p3"
@@ -96,34 +96,36 @@ particion_conectada=$(virsh dumpxml mvp3 | tr -s ' ' | grep sda | wc -l)
 
 # Comprobacion de conexcion de la particion del anfitrion a la maquina
 if [ $particion_conectada == "2" ]; then
-    echo "✅ Éxito: La particion esta conectada a la máquina."
+    echo "✅ Éxito: La partición esta conectada a la máquina."
 else
-    error "La particion no se encuentra conectada a la máquina."
+    error "La partición no se encuentra conectada a la máquina."
 fi
 
 #################################
 # VERIFICACIÓN VOL2_p3 (TAREA 3)
 #################################
 
-# Comprobacion de nombre de vol2_p3
-if virsh vol-dumpxml --vol /var/lib/libvirt/Pool_Particion/Vol2_p3.qcow2 | grep name | grep Vol2_p3.qcow2 >/dev/null 2>&1; then
-    echo "✅ Éxito: El volumen Vol2_p3.qcow2 se llama Vol2_p3.qcow2"
+# Comprobacion que existe el Volumen en default y el nombre
+if virsh vol-list Contenedor_Particion | grep Vol2_p3 >/dev/null 2>&1; then
+    echo "✅ Éxito: El volumen Vol2_p3 existe"
+elif virsh vol-list Contenedor_Particion | grep Vol2_p3.qcow2; then
+    echo "✅ Éxito: El volumen Vol2_p3 existe"
 else
-    error "El volumen Vol2_p3 no se llama de la forma correcta."
+    error "No se encuentra el volumen Vol2_p3"
 fi
     
 # Comprobacion de tipo de volumen de vol2_p3
 if virsh vol-dumpxml --vol /var/lib/libvirt/Pool_Particion/Vol2_p3.qcow2 | grep format | grep qcow2 >/dev/null 2>&1; then
     echo "✅ Éxito: El volumen Vol2_p3.qcow2 es de tipo qcow2"
 else
-    error "El volumen tipo de volumen de Vol2_p3 es incorrecto."
+    error "El tipo de volumen de Vol2_p3 es incorrecto."
 fi
     
 # Comprobacion del tamaño del volumen vol2_p3
 if virsh vol-dumpxml --vol /var/lib/libvirt/Pool_Particion/Vol2_p3.qcow2 | grep capacity | grep 1073741824 >/dev/null 2>&1; then
     echo "✅ Éxito: El volumen Vol2_p3.qcow2 es de exactamente 1GB"
 else
-    error "El volumen tamaño de Vol2_p3 es incorrecto."
+    error "El tamaño de Vol2_p3 es incorrecto."
 fi
 
 #################################
@@ -248,7 +250,7 @@ error() {
 if lsblk /dev/sda --noheadings | grep "512M" >/dev/null 2>&1; then
     echo "✅ Éxito: La particion de 512M en Vol1_p3 es correcta."
 else
-    error "No es correcta la particion de 512M en Vol1_p3."
+    error "No es correcta la partición de 512M en Vol1_p3."
 fi
 
 
@@ -256,7 +258,7 @@ fi
 if lsblk -f /dev/sda | grep "xfs" >/dev/null 2>&1; then
     echo "✅ Éxito: La particion de 512M en Vol1_p3 tiene un sistema de ficheros XFS."
 else
-    error "La particion de 512M en Vol1_p3 no tiene un sistema de ficheros XFS."
+    error "La partición de 512M en Vol1_p3 no tiene un sistema de ficheros XFS."
 fi
 
 
@@ -276,9 +278,9 @@ fi
 
 # Comprobacion de que aparece como sdb en la máquina virtual
 if lsblk /dev/sdb --noheadings | grep 1G >/dev/null 2>&1; then
-    echo "✅ Éxito: La particion aparece en la máquina virtual con el tamaño adecuado y como sdb."
+    echo "✅ Éxito: La partición aparece en la máquina virtual con el tamaño adecuado y como sdb."
 else
-    error "La particion no aparece en la máquina virtual con el tamaño adecuado y como sdb."
+    error "La partición no aparece en la máquina virtual con el tamaño adecuado y como sdb."
 fi
 
 # Comprobacion de sistema de ficheros de sdb XFS
@@ -332,14 +334,14 @@ fi
 
 # Comprobacion de sistema de ficheros de vdc XFS
 if lsblk -f | grep vdc | grep xfs >/dev/null 2>&1; then
-    echo "✅ Éxito: El sistema de ficheros del pcHOST_LQX_ANFITRIONY_Vol3_p3 es de tipo xfs"
+    echo "✅ Éxito: El sistema de ficheros del $VOLUMEN es de tipo xfs"
 else
     error "El sistema de ficheros de vdc no es de tipo xfs."
 fi
 
 # Comprobacion de montaje del vdb
 if lsblk -f | grep vdc | grep /mnt/VDC >/dev/null 2>&1; then
-    echo "✅ Éxito: El sistema de ficheros está montado en /mnt/VDC, pcHOST_LQX_ANFITRIONY_Vol3_p3"
+    echo "✅ Éxito: El sistema de ficheros está montado en /mnt/VDC, $VOLUMEN"
 else
     error "El sistema de ficheros no está montado en /mnt/VDC."
 fi
@@ -347,7 +349,7 @@ fi
 
 # Comprobacion del fichero test.txt en /mnt/VDC
 if ls /mnt/VDC | grep test.txt >/dev/null 2>&1; then
-    echo "✅ Éxito: El sistema de ficheros contiene test.txt, pcHOST_LQX_ANFITRIONY_Vol3_p3"
+    echo "✅ Éxito: El sistema de ficheros contiene test.txt, &VOLUMEN"
 else
     error "El sistema de ficheros de vdc no contiene test.txt."
 fi

@@ -75,31 +75,21 @@ Los datos requeridos para agregar este nuevo contenedor de almacenamiento compar
 
 Tarea 5
 
-Los
-datos requeridos para crear este nuevo contenedor de espacio de almacenamiento
-compartido son los siguientes:
-• Nombre del contenedor: CONT_VOL_COMP
-• Ruta del directorio local asociado al contenedor:
-/var/lib/libvirt/images/COMPARTIDO
-• Servidor NFS: disnas2.dis.ulpgc.es
-• Ruta del directorio exportado por el servidor NFS: /disnas2-itsi
-• El contenedor NO DEBE ACTIVARSE AUTOMÁTICAMENTE con el
-arranque del sistema.
-
-
 Deberá crear un volumen llamado “pcHOST_LQX_ANFITRIONY_Vol3_p3” en dicho
-contenedor de tamaño 1GB, de tipo “qcow2”. Añadir el nuevo volumen creado a la
+contenedor de tamaño 1GB,
+de tipo “qcow2”
+Añadir el nuevo volumen creado a la
 máquina mvp3 como volumen de disco paravirtualizado, debiendo aparecer
-en la máquina mvp3 como el disco vdc. Para verificar que el nuevo volumen vdc
-está operativo en la máquina mvp3, deberá:
-• Sin particionar el disco vdc, crear en dicho disco un sistema de archivos de
-tipo XFS.
-• En el sistema de archivos creado, crear un archivo de nombre test.txt
+en la máquina mvp3 como el disco vdc.
 
-Además, deberá realizar la configuración necesaria para que el volumen se monte
-de forma automática en el arranque de la máquina mvp3 en el directorio /VDC.
+• En el sistema de archivos creado, crear un archivo de nombre test.txt -> ls /mnt/VDC | grep test.txt
+
 
 nombre del volumen -> pcHOST_LQX_ANFITRIONY_Vol3_p3
+
+HOST -> hostname | grep -o '[0-9]\+'
+X -> hostname | sed -n 's/^lq-\([a-z]\)[0-9]\+.*/\1/p' | tr '[:lower:]' '[:upper:]'
+Y ->
 
 ---
 

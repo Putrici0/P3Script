@@ -206,25 +206,26 @@ else
     error "El autoinicio está activado para CONT_VOL_COMP."
 fi
 
-# Comprobacion de nombre de vol2_p3
-if virsh vol-dumpxml --vol /var/lib/libvirt/Pool_Particion/Vol2_p3.qcow2 | grep name | grep Vol2_p3.qcow2 >/dev/null 2>&1; then
-    echo "✅ Éxito: El volumen Vol2_p3.qcow2 se llama Vol2_p3.qcow2"
+# Comprobacion de tamaño del volumen
+VOLUMEN_REAL=$(virsh vol-list --pool CONT_VOL_COMP | grep $VOLUMEN | tr -s ' ' | cut -d' ' -f2)
+if virsh vol-dumpxml --vol /var/lib/libvirt/images/COMPARTIDO/$VOLUMEN_REAL --pool CONT_VOL_COMP | grep 1073741824 >/dev/null 2>&1; then
+    echo "✅ Éxito: El tamaño de pcXXXXXX_LQX_VOL3"
 else
-    error "El volumen Vol2_p3 no se llama de la forma correcta."
+    error "El tamaño de pcXXXXXX_LQX_VOL3 es incorrecto."
 fi
     
-# Comprobacion de tipo de volumen de vol2_p3
-if virsh vol-dumpxml --vol /var/lib/libvirt/Pool_Particion/Vol2_p3.qcow2 | grep format | grep qcow2 >/dev/null 2>&1; then
+# Comprobacion de tipo del volumen
+if virsh vol-dumpxml --vol /var/lib/libvirt/images/COMPARTIDO/$VOLUMEN_REAL --pool CONT_VOL_COMP | grep format | grep qcow2 >/dev/null 2>&1; then
     echo "✅ Éxito: El volumen Vol2_p3.qcow2 es de tipo qcow2"
 else
     error "El volumen tipo de volumen de Vol2_p3 es incorrecto."
 fi
     
-# Comprobacion del tamaño del volumen vol2_p3
-if virsh vol-dumpxml --vol /var/lib/libvirt/Pool_Particion/Vol2_p3.qcow2 | grep capacity | grep 1073741824 >/dev/null 2>&1; then
-    echo "✅ Éxito: El volumen Vol2_p3.qcow2 es de exactamente 1GB"
+# Comprobacion de nombre del volumen
+if virsh vol-dumpxml --vol /var/lib/libvirt/images/COMPARTIDO/$VOLUMEN_REAL --pool CONT_VOL_COMP | grep name | grep $VOLUMEN >/dev/null 2>&1; then
+    echo "✅ Éxito: El volumen $VOLUMEN_REAL se llama de forma correcta."
 else
-    error "El volumen tamaño de Vol2_p3 es incorrecto."
+    error "El volumen $VOLUMEN_REAL no tiene el nombre requerido."
 fi
 
 #############################

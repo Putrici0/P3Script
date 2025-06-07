@@ -30,7 +30,7 @@ error() {
 verificar_redes_y_vm() {
 
 #################################
-# VERIFICACIÓN VOL1_p3 (TAREA 1)
+# INICIALIZACIÓN DE COMPONENETES
 #################################
 
 estado_pool=$(virsh pool-info CONT_VOL_COMP 2>/dev/null | grep -i Estado | awk '{print $2}')

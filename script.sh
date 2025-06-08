@@ -301,7 +301,7 @@ fi
 
 
 #################################
-# VERIFICACIÓN VOL1_p3 (TAREA 3) PT.2
+# VERIFICACIÓN VOL2_p3 (TAREA 3) PT.2
 #################################
 
 

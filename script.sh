@@ -348,9 +348,9 @@ fi
 
 # Comprobación del fichero test.txt en /mnt/VDC
 if ls /mnt/VDC | grep test.txt >/dev/null 2>&1; then
-    echo "✅ Éxito: El sistema de ficheros contiene test.txt, &VOLUMEN."
+    echo "✅ Éxito: El sistema de ficheros contiene test.txt, $VOLUMEN."
 else
-    error "El sistema de ficheros de vdc no contiene test.txt, &VOLUMEN."
+    error "El sistema de ficheros de vdc no contiene test.txt, $VOLUMEN."
 fi
 
 echo "Fin de comprobaciones."

@@ -48,7 +48,7 @@ else
 fi
 
 
-echo "Iniciando la máquina virtual 'mvp3', por favor espere 20 segundos..."
+echo "==== Iniciando la máquina virtual 'mvp3', por favor espere 20 segundos... ===="
 estado_vm=$(virsh domstate mvp3 2>/dev/null)
 if [[ "$estado_vm" != "encendido" ]]; then
     virsh start mvp3 &> /dev/null || error "No se pudo iniciar la máquina virtual mvp3"
@@ -361,10 +361,9 @@ fi
 echo "Fin de comprobaciones."
 EOF
 
-
+echo "Apagando la máquina 'mvp3', espere 10 segundos"
 virsh shutdown mvp3
 sleep 10
-echo "Apagando la máquina 'mvp3'"
 virsh pool-destroy CONT_VOL_COMP
 exit 0
 }

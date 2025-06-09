@@ -36,7 +36,7 @@ verificar_redes_y_vm() {
 estado_pool=$(virsh pool-info CONT_VOL_COMP 2>/dev/null | grep -i Estado | awk '{print $2}')
 if [[ "$estado_pool" != "ejecutando" ]]; then
     virsh pool-start CONT_VOL_COMP &> /dev/null || error "No se pudo iniciar el contenedor CONT_VOL_COMP"
-    echo "✅ Contenedor CONT_VOL_COMP iniciado correctamente."
+    echo "ÉXITO: Contenedor CONT_VOL_COMP iniciado correctamente."
 else
     echo "ERROR: El contenedor CONT_VOL_COMP ya estaba activo."
     exit 1
@@ -60,7 +60,7 @@ fi
 # Comprobación que existe el Volumen en default y el nombre
 if virsh vol-list default | grep Vol1_p3 >/dev/null 2>&1; then
     VOLUMEN_REAL_VOL1=$(virsh vol-list --pool default | grep Vol1_p3 | tr -s ' ' | cut -d' ' -f2)
-    echo "✅ Éxito: El volumen Vol1_p3 existe"
+    echo "ÉXITO: El volumen Vol1_p3 existe"
 else
     error "No se encuentra el volumen Vol1_p3"
 fi
@@ -68,12 +68,12 @@ fi
 # Comprobar el tipo de volumen
 tipo_vol1_p3=$(virsh vol-dumpxml $VOLUMEN_REAL_VOL1 --pool default | grep "format type" | tr -s ' ' | cut -c 16-18)
 [ "$tipo_vol1_p3" == "raw" ] || error "Tipo de volumen incorrecto: $tipo_vol1_p3 es distinto de raw"
-echo "✅ Éxito: Tipo de Vol1_p3 correcto."
+echo "ÉXITO: Tipo de Vol1_p3 correcto."
 
 # Comprobación de tamaño del volumen
 tamano_vol1_p3=$(virsh vol-dumpxml $VOLUMEN_REAL_VOL1 --pool default | grep "capacity unit" | tr -s ' ' | cut -c 25-34)
 [ "$tamano_vol1_p3" == "1073741824" ] || error "Tamaño incorrecto de Vol1_p3: $tamano_vol1_p3 no es 1GB"
-echo "✅ Éxito: Tamaño de Vol1_p3 correcto."
+echo "ÉXITO: Tamaño de Vol1_p3 correcto."
 
 #################################
 # VERIFICACIÓN VOL1_p3 (TAREA 1) PT.2
@@ -81,7 +81,7 @@ echo "✅ Éxito: Tamaño de Vol1_p3 correcto."
 
 # Comprobación de Vol1_p3 a SATA
 if virsh dumpxml mvp3 | grep -A 5 $VOLUMEN_REAL_VOL1 | grep sata >/dev/null 2>&1; then
-    echo "✅ Éxito: El volumen  Vol1_p3 esta correctamente asociado al bus SATA."
+    echo "ÉXITO: El volumen  Vol1_p3 esta correctamente asociado al bus SATA."
 else
     error "No se ha asociado el volumen Vol1_p3 al bus SATA."
 fi
@@ -94,7 +94,7 @@ particion_conectada=$(virsh dumpxml mvp3 | tr -s ' ' | grep sda | wc -l)
 
 # Comprobación de conexión de la partición del anfitrión a la máquina
 if [ $particion_conectada == "2" ]; then
-    echo "✅ Éxito: La partición esta conectada a la máquina."
+    echo "ÉXITO: La partición esta conectada a la máquina."
 else
     error "La partición no se encuentra conectada a la máquina."
 fi
@@ -107,21 +107,21 @@ VOLUMEN_REAL_VOL2=$(virsh vol-list --pool Contenedor_Particion | grep Vol2_p3 | 
 
 # Comprobación de nombre del volumen
 if virsh vol-dumpxml --vol /var/lib/libvirt/Pool_Particion/$VOLUMEN_REAL_VOL2 --pool Contenedor_Particion | grep name | grep Vol2_p3 >/dev/null 2>&1; then
-    echo "✅ Éxito: El volumen $VOLUMEN_REAL_VOL2 se llama de forma correcta."
+    echo "ÉXITO: El volumen $VOLUMEN_REAL_VOL2 se llama de forma correcta."
 else
     error "El volumen $VOLUMEN_REAL_VOL2 no tiene el nombre requerido."
 fi
     
 # Comprobación de tipo de volumen de vol2_p3
 if virsh vol-dumpxml --vol /var/lib/libvirt/Pool_Particion/$VOLUMEN_REAL_VOL2 | grep format | grep qcow2 >/dev/null 2>&1; then
-    echo "✅ Éxito: El volumen Vol2_p3 es de tipo qcow2"
+    echo "ÉXITO: El volumen Vol2_p3 es de tipo qcow2"
 else
     error "El tipo de volumen de Vol2_p3 es incorrecto."
 fi
     
 # Comprobación del tamaño del volumen vol2_p3
 if virsh vol-dumpxml --vol /var/lib/libvirt/Pool_Particion/$VOLUMEN_REAL_VOL2 | grep capacity | grep 1073741824 >/dev/null 2>&1; then
-    echo "✅ Éxito: El volumen Vol2_p3 es de exactamente 1GB"
+    echo "ÉXITO: El volumen Vol2_p3 es de exactamente 1GB"
 else
     error "El tamaño de Vol2_p3 es incorrecto."
 fi
@@ -132,35 +132,35 @@ fi
 
 # Comprobación de nombre de CONT_ISOS_COMP
 if virsh pool-dumpxml CONT_ISOS_COMP | grep "<name>" | grep CONT_ISOS_COMP >/dev/null 2>&1; then
-    echo "✅ Éxito: El contenedor CONT_ISOS_COMP se llama correctamente"
+    echo "ÉXITO: El contenedor CONT_ISOS_COMP se llama correctamente"
 else
     error "El contenedor CONT_ISOS_COMP no se llama de la forma correcta."
 fi
 
 # Comprobación de la ruta de CONT_ISOS_COMP
 if virsh pool-dumpxml CONT_ISOS_COMP | grep "<path>" | grep /var/lib/libvirt/images/ISOS >/dev/null 2>&1; then
-    echo "✅ Éxito: La ruta del CONT_ISOS_COMP es var/lib/libvirt/images/ISOS"
+    echo "ÉXITO: La ruta del CONT_ISOS_COMP es var/lib/libvirt/images/ISOS"
 else
     error "El contenedor CONT_ISOS_COMP no se encuentra en la ruta correcta."
 fi
 
 # Comprobación del servidor NFS
 if virsh pool-dumpxml CONT_ISOS_COMP | grep "name=" | grep disnas2.dis.ulpgc.es >/dev/null 2>&1; then
-    echo "✅ Éxito: El servidor NFS de CONT_ISOS_COMP es disnas2.dis.ulpgc.es"
+    echo "ÉXITO: El servidor NFS de CONT_ISOS_COMP es disnas2.dis.ulpgc.es"
 else
     error "El servidor NFS de CONT_ISOS_COMP es incorrecto."
 fi
 
 # Comprobación de la ruta del servidor NFS
 if virsh pool-dumpxml CONT_ISOS_COMP | grep dir | grep /imagenes/fedora/41/isos/x86_64 >/dev/null 2>&1; then
-    echo "✅ Éxito: La ruta del servidor NFS de CONT_ISOS_COMP es imagenes/fedora/41/isos/x86_64"
+    echo "ÉXITO: La ruta del servidor NFS de CONT_ISOS_COMP es imagenes/fedora/41/isos/x86_64"
 else
     error "La ruta del servidor NFS de CONT_ISOS_COMP es incorrecta."
 fi
 
 # Comprobación del autoarranque de CONT_ISOS_COMP
 if virsh pool-info CONT_ISOS_COMP | grep Autoinicio | grep no >/dev/null 2>&1; then
-    echo "✅ Éxito: El autoinicio está desactivado para CONT_ISOS_COMP"
+    echo "ÉXITO: El autoinicio está desactivado para CONT_ISOS_COMP"
 else
     error "El autoinicio está activado para CONT_ISOS_COMP."
 fi
@@ -171,35 +171,35 @@ fi
 
 # Comprobación de nombre de CONT_VOL_COMP
 if virsh pool-dumpxml CONT_VOL_COMP | grep "<name>" | grep CONT_VOL_COMP >/dev/null 2>&1; then
-    echo "✅ Éxito: El contenedor CONT_VOL_COMP se llama CONT_VOL_COMP"
+    echo "ÉXITO: El contenedor CONT_VOL_COMP se llama CONT_VOL_COMP"
 else
     error "El contenedor CONT_VOL_COMP no se llama de la forma correcta."
 fi
 
 # Comprobación de la ruta de CONT_VOL_COMP
 if virsh pool-dumpxml CONT_VOL_COMP | grep "<path>" | grep /var/lib/libvirt/images/COMPARTIDO >/dev/null 2>&1; then
-    echo "✅ Éxito: La ruta del CONT_VOL_COMP es /var/lib/libvirt/images/COMPARTIDO"
+    echo "ÉXITO: La ruta del CONT_VOL_COMP es /var/lib/libvirt/images/COMPARTIDO"
 else
     error "El contenedor CONT_VOL_COMP no se encuentra en la ruta correcta."
 fi
 
 # Comprobación del servidor NFS de CONT_VOL_COMP
 if virsh pool-dumpxml CONT_VOL_COMP | grep "host" | grep disnas2.dis.ulpgc.es >/dev/null 2>&1; then
-    echo "✅ Éxito: El servidor NFS de CONT_VOL_COMP es disnas2.dis.ulpgc.es"
+    echo "ÉXITO: El servidor NFS de CONT_VOL_COMP es disnas2.dis.ulpgc.es"
 else
     error "El servidor NFS de CONT_VOL_COMP es incorrecto."
 fi
 
 # Comprobación de la ruta exportada por el servidor NFS de CONT_VOL_COMP
 if virsh pool-dumpxml CONT_VOL_COMP | grep "dir" | grep /disnas2-itsi >/dev/null 2>&1; then
-    echo "✅ Éxito: La ruta del servidor NFS es imagenes/fedora/41/isos/x86_64"
+    echo "ÉXITO: La ruta del servidor NFS es imagenes/fedora/41/isos/x86_64"
 else
     error "La ruta del servidor NFS es incorrecta."
 fi
 
 # Comprobación del autoarranque de CONT_VOL_COMP
 if virsh pool-info CONT_VOL_COMP | grep Autoinicio | grep no >/dev/null 2>&1; then
-    echo "✅ Éxito: El autoinicio está desactivado para CONT_VOL_COMP"
+    echo "ÉXITO: El autoinicio está desactivado para CONT_VOL_COMP"
 else
     error "El autoinicio está activado para CONT_VOL_COMP."
 fi
@@ -208,21 +208,21 @@ VOLUMEN_REAL_PC=$(virsh vol-list --pool CONT_VOL_COMP | grep $VOLUMEN | tr -s ' 
 
 # Comprobación de tamaño del volumen
 if virsh vol-dumpxml --vol /var/lib/libvirt/images/COMPARTIDO/$VOLUMEN_REAL_PC --pool CONT_VOL_COMP | grep 1073741824 >/dev/null 2>&1; then
-    echo "✅ Éxito: El tamaño de $VOLUMEN_REAL_PC es correcto"
+    echo "ÉXITO: El tamaño de $VOLUMEN_REAL_PC es correcto"
 else
     error "El tamaño de $VOLUMEN_REAL_PC es incorrecto."
 fi
 
 # Comprobación de tipo del volumen
 if virsh vol-dumpxml --vol /var/lib/libvirt/images/COMPARTIDO/$VOLUMEN_REAL_PC --pool CONT_VOL_COMP | grep format | grep qcow2 >/dev/null 2>&1; then
-    echo "✅ Éxito: El volumen Vol2_p3.qcow2 es de tipo qcow2"
+    echo "ÉXITO: El volumen Vol2_p3.qcow2 es de tipo qcow2"
 else
     error "El volumen tipo de volumen de Vol2_p3 es incorrecto."
 fi
     
 # Comprobación de nombre del volumen
 if virsh vol-dumpxml --vol /var/lib/libvirt/images/COMPARTIDO/$VOLUMEN_REAL_PC --pool CONT_VOL_COMP | grep name | grep $VOLUMEN >/dev/null 2>&1; then
-    echo "✅ Éxito: El volumen $VOLUMEN_REAL_PC se llama de forma correcta."
+    echo "ÉXITO: El volumen $VOLUMEN_REAL_PC se llama de forma correcta."
 else
     error "El volumen $VOLUMEN_REAL_PC no tiene el nombre requerido."
 fi
@@ -247,7 +247,7 @@ error() {
 
 # Comprobación de que se ha creado una partición en sda
 if lsblk /dev/sda --noheadings | grep "512M" >/dev/null 2>&1; then
-    echo "✅ Éxito: La partición de 512M en Vol1_p3 es correcta."
+    echo "ÉXITO: La partición de 512M en Vol1_p3 es correcta."
 else
     error "No es correcta la partición de 512M en Vol1_p3."
 fi
@@ -255,7 +255,7 @@ fi
 
 # Comprobación de que se ha creado una particion en sda
 if lsblk -f /dev/sda | grep "xfs" >/dev/null 2>&1; then
-    echo "✅ Éxito: La partición de 512M en Vol1_p3 tiene un sistema de ficheros XFS."
+    echo "ÉXITO: La partición de 512M en Vol1_p3 tiene un sistema de ficheros XFS."
 else
     error "La partición de 512M en Vol1_p3 no tiene un sistema de ficheros XFS."
 fi
@@ -264,7 +264,7 @@ fi
 # Comprobación de que el fichero test.txt esta dentro del sistema de Vol1_p3
 mount /dev/sda1 /mnt/
 if ls /mnt | grep "test.txt" >/dev/null 2>&1; then
-    echo "✅ Éxito: El fichero text.txt se encuentra dentro del sistema de ficheros."
+    echo "ÉXITO: El fichero text.txt se encuentra dentro del sistema de ficheros."
     umount /mnt/
 else
     umount /mnt/
@@ -277,14 +277,14 @@ fi
 
 # Comprobación de que aparece como sdb en la máquina virtual
 if lsblk /dev/sdb --noheadings | grep 1G >/dev/null 2>&1; then
-    echo "✅ Éxito: La partición aparece en la máquina virtual con el tamaño adecuado y como sdb."
+    echo "ÉXITO: La partición aparece en la máquina virtual con el tamaño adecuado y como sdb."
 else
     error "La partición no aparece en la máquina virtual con el tamaño adecuado y como sdb."
 fi
 
 # Comprobación de sistema de ficheros de sdb XFS
 if lsblk /dev/sdb -f --noheadings | grep xfs >/dev/null 2>&1; then
-    echo "✅ Éxito: El sistema de ficheros del SDB es de tipo xfs"
+    echo "ÉXITO: El sistema de ficheros del SDB es de tipo xfs"
 else
     error "El sistema de ficheros de SDB no es de tipo xfs."
 fi
@@ -292,7 +292,7 @@ fi
 # Comprobar que el fichero test.txt está dentro del sistema de sdb
 mount /dev/sdb /mnt/
 if ls /mnt | grep "test.txt" >/dev/null 2>&1; then
-    echo "✅ Éxito: El fichero text.txt se encuentra dentro del sistema de ficheros."
+    echo "ÉXITO: El fichero text.txt se encuentra dentro del sistema de ficheros."
     umount /mnt/
 else
     umount /mnt/
@@ -307,14 +307,14 @@ fi
 
 # Comprobación de sistema de ficheros de vdb XFS
 if lsblk -f | grep vdb  | grep xfs >/dev/null 2>&1; then
-    echo "✅ Éxito: El sistema de ficheros del vdb es de tipo xfs"
+    echo "ÉXITO: El sistema de ficheros del vdb es de tipo xfs"
 else
     error "El sistema de ficheros de vdb no es de tipo xfs."
 fi
 
 # Comprobación de montaje del vdb
 if lsblk -f | grep vdb | grep /mnt/VDB >/dev/null 2>&1; then
-    echo "✅ Éxito: El sistema de ficheros está montado en /mnt/VDB, Vol2_p3"
+    echo "ÉXITO: El sistema de ficheros está montado en /mnt/VDB, Vol2_p3"
 else
     error "El sistema de ficheros no está montado en /mnt/VDB, Vol2_p3."
 fi
@@ -322,7 +322,7 @@ fi
 
 # Comprobación del fichero test.txt en /mnt/VDB
 if ls /mnt/VDB | grep test.txt >/dev/null 2>&1; then
-    echo "✅ Éxito: El sistema de ficheros contiene test.txt, Vol2_p3"
+    echo "ÉXITO: El sistema de ficheros contiene test.txt, Vol2_p3"
 else
     error "El sistema de ficheros no contiene test.txt, Vol2_p3."
 fi
@@ -333,14 +333,14 @@ fi
 
 # Comprobación de sistema de ficheros de vdc XFS
 if lsblk -f | grep vdc | grep xfs >/dev/null 2>&1; then
-    echo "✅ Éxito: El sistema de ficheros de vdc es de tipo xfs"
+    echo "ÉXITO: El sistema de ficheros de vdc es de tipo xfs"
 else
     error "El sistema de ficheros de vdc no es de tipo xfs."
 fi
 
 # Comprobación de montaje del vdb
 if lsblk -f | grep vdc | grep /mnt/VDC >/dev/null 2>&1; then
-    echo "✅ Éxito: El sistema de ficheros está montado en /mnt/VDC, $VOLUMEN"
+    echo "ÉXITO: El sistema de ficheros está montado en /mnt/VDC, $VOLUMEN"
 else
     error "El sistema de ficheros no está montado en /mnt/VDC, $VOLUMEN."
 fi
@@ -348,7 +348,7 @@ fi
 
 # Comprobación del fichero test.txt en /mnt/VDC
 if ls /mnt/VDC | grep test.txt >/dev/null 2>&1; then
-    echo "✅ Éxito: El sistema de ficheros contiene test.txt, $VOLUMEN."
+    echo "ÉXITO: El sistema de ficheros contiene test.txt, $VOLUMEN."
 else
     error "El sistema de ficheros de vdc no contiene test.txt, $VOLUMEN."
 fi
@@ -371,7 +371,7 @@ exit 0
 # Si el primer argumento es "local", ejecutar directamente
 if [ "$1" == "local" ]; then
     shift
-    echo "✅ Ejecutando comprobaciones en anfitrión local (modo remoto 'local')..."
+    echo "--> Ejecutando comprobaciones en anfitrión local (modo remoto 'local')..."
     verificar_redes_y_vm
     exit 0
 fi

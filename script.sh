@@ -4,7 +4,7 @@
 VM_NAME="mvp3"
 VM_USER="root"
 
-xml="/etc/libvirt/qemu/mvp3.xml"
+# xml="/etc/libvirt/qemu/mvp3.xml"
 
 HOST_NUM=$(hostname | grep -o '[0-9]\+')
 HOST_LETTER=$(hostname | sed -n 's/^lq-\([a-z]\)[0-9]\+.*/\1/p' | tr '[:lower:]' '[:upper:]')
@@ -376,7 +376,7 @@ exit 0
 # Si el primer argumento es "local", ejecutar directamente
 if [ "$1" == "local" ]; then
     shift
-    echo "--> Ejecutando comprobaciones en anfitrión local (modo remoto 'local')..."
+    echo "==== Ejecutando comprobaciones en anfitrión local (modo remoto 'local')... ===="
     script_p3
     exit 0
 fi
@@ -384,12 +384,12 @@ fi
 # Si se pasa una IP, ejecutar en remoto
 if [[ "$1" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     remote_host="$1"
-    echo "📡 Ejecutando comprobaciones en anfitrión remoto $remote_host..."
+    echo "==== Ejecutando comprobaciones en anfitrión remoto $remote_host... ===="
 
     # Copiar el script al remoto
     scp "$0" "$remote_host:/tmp/"
     if [ $? -ne 0 ]; then
-        echo "[ERROR] No se pudo copiar el script al anfitrión remoto" //TODO Creo que aqui habia que poner error en vez de echo
+        error_inicio "No se pudo copiar el script al anfitrión remoto"
         exit 1
     fi
 
@@ -399,6 +399,6 @@ if [[ "$1" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
 fi
 
 # Si el argumento no es válido
-echo "[ERROR] Argumento no reconocido: '$1'" //TODO Lo mismo que el otro TODO
-echo "Uso: $0 [IP_remota] | local"
+error_inicio "Argumento no reconocido: '$1'"
+error_inicio "Uso: $0 [IP_remota] | local"
 exit 1

@@ -13,7 +13,7 @@ GRADO=$2
 
 # Validar grado
 if [[ "$GRADO" != "1" && "$GRADO" != "2" ]]; then
-    echo "Error: el grado debe ser 1 o 2 (1=GII o 2=GCID)"
+    error_inicio "El grado debe ser 1 o 2 (1=GII o 2=GCID)"
     exit 1
 fi
 
@@ -27,7 +27,12 @@ error() {
     exit 1
 }
 
-verificar_redes_y_vm() {
+error_inicio() {
+    echo "ERROR: $1"
+    exit 1
+}
+
+script_p3() {
 
 #################################
 # INICIALIZACIÓN DE COMPONENETES
@@ -38,7 +43,7 @@ if [[ "$estado_pool" != "ejecutando" ]]; then
     virsh pool-start CONT_VOL_COMP &> /dev/null || error "No se pudo iniciar el contenedor CONT_VOL_COMP"
     echo "ÉXITO: Contenedor CONT_VOL_COMP iniciado correctamente."
 else
-    echo "ERROR: El contenedor CONT_VOL_COMP ya estaba activo."
+    error_inicio "El contenedor CONT_VOL_COMP ya estaba activo."
     exit 1
 fi
 
@@ -49,7 +54,7 @@ if [[ "$estado_vm" != "encendido" ]]; then
     virsh start mvp3 &> /dev/null || error "No se pudo iniciar la máquina virtual mvp3"
     sleep 20
 else
-    echo "ERROR: La máquina virtual mvp3 ya estaba encendida."
+    error_inicio "La máquina virtual mvp3 ya estaba encendida."
 fi
 
 
@@ -372,7 +377,7 @@ exit 0
 if [ "$1" == "local" ]; then
     shift
     echo "--> Ejecutando comprobaciones en anfitrión local (modo remoto 'local')..."
-    verificar_redes_y_vm
+    script_p3
     exit 0
 fi
 

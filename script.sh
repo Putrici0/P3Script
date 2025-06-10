@@ -4,7 +4,7 @@
 VM_NAME="mvp3"
 VM_USER="root"
 
-# xml="/etc/libvirt/qemu/mvp3.xml"
+xml="/etc/libvirt/qemu/mvp3.xml"
 
 HOST_NUM=$(hostname | grep -o '[0-9]\+')
 HOST_LETTER=$(hostname | sed -n 's/^lq-\([a-z]\)[0-9]\+.*/\1/p' | tr '[:lower:]' '[:upper:]')

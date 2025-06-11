@@ -105,6 +105,18 @@ else
 fi
 
 #################################
+# VERIFICACIÓN Contenedor_Particion (TAREA 3)
+#################################
+
+# Comprobación de la ruta
+if virsh pool-dumpxml Contenedor_Particion | grep path | grep /var/lib/libvirt/Pool_Particion >/dev/null 2>&1; then
+    echo "ÉXITO: El contenedor se llama de forma correcta."
+else
+    error "El contenedor no tiene el nombre requerido."
+fi
+
+
+#################################
 # VERIFICACIÓN VOL2_p3 (TAREA 3)
 #################################
 

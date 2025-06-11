@@ -107,6 +107,12 @@ fi
 #################################
 # VERIFICACIÓN Contenedor_Particion (TAREA 3)
 #################################
+# Compmrobar que este encendido
+if virsh pool-info Contenedor_Particion | grep "en ejecucion" >/dev/null 2>&1; then
+    echo "ÉXITO: El contenedor Contenedor_Particion esta encendido."
+else
+    error "El contenedor Contenedor_Particion no esta encendido."
+fi
 
 # Comprobación de la ruta
 if virsh pool-dumpxml Contenedor_Particion | grep path | grep /var/lib/libvirt/Pool_Particion >/dev/null 2>&1; then
@@ -115,6 +121,11 @@ else
     error "El contenedor no tiene el nombre requerido."
 fi
 
+if virsh pool-info Contendor_Particion | grep Autoinicio | grep si >/dev/null 2>&1; then
+    echo "ÉXITO: El autoinicio está activado para Contendor_Particion."
+else
+    error "El autoinicio está desactivado para Contendor_Particion."
+fi
 
 #################################
 # VERIFICACIÓN VOL2_p3 (TAREA 3)

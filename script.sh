@@ -343,7 +343,7 @@ else
     error "El sistema de ficheros de vdc no es de tipo xfs."
 fi
 
-# Comprobación de montaje del vdb
+# Comprobación de montaje del vdc
 if lsblk -f | grep vdc | grep /mnt/VDC >/dev/null 2>&1; then
     echo "ÉXITO: El sistema de ficheros está montado en /mnt/VDC, $VOLUMEN"
 else

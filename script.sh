@@ -250,7 +250,7 @@ error() {
 # VERIFICACIÓN VOL1_p3 (TAREA 1) PT.3
 #################################
 
-# Comprobación de que se ha creado una partición en sda
+# Comprobación del tamaño de la partición sda
 if lsblk /dev/sda --noheadings | grep "512M" >/dev/null 2>&1; then
     echo "ÉXITO: La partición de 512M en Vol1_p3 es correcta."
 else
@@ -258,7 +258,7 @@ else
 fi
 
 
-# Comprobación de que se ha creado una particion en sda
+# Comprobación del tipo de sistema de ficheros de la partición sda
 if lsblk -f /dev/sda | grep "xfs" >/dev/null 2>&1; then
     echo "ÉXITO: La partición de 512M en Vol1_p3 tiene un sistema de ficheros XFS."
 else

@@ -324,13 +324,17 @@ else
     error "El sistema de ficheros no está montado en /mnt/VDB, Vol2_p3."
 fi
 
-
 # Comprobación del fichero test.txt en /mnt/VDB
-if ls /mnt/VDB | grep test.txt >/dev/null 2>&1; then
-    echo "ÉXITO: El sistema de ficheros contiene test.txt, Vol2_p3"
+mount /dev/vdb /VDB/
+if ls /VDB | grep "test.txt" >/dev/null 2>&1; then
+    echo "ÉXITO: El fichero text.txt se encuentra dentro del sistema de ficheros."
+    umount /VDB/
 else
-    error "El sistema de ficheros no contiene test.txt, Vol2_p3."
+    umount /VDB/
+    error "El fichero text.txt no se encuentra dentro del sistema de ficheros."
 fi
+
+
 
 #################################
 # VERIFICACIÓN pcHOST_LQX_ANFITRIONY_Vol3_p3 (TAREA 5) PT.2
@@ -352,10 +356,13 @@ fi
 
 
 # Comprobación del fichero test.txt en /mnt/VDC
-if ls /mnt/VDC | grep test.txt >/dev/null 2>&1; then
-    echo "ÉXITO: El sistema de ficheros contiene test.txt, $VOLUMEN."
+mount /dev/vdc /VDC/
+if ls /VDC | grep "test.txt" >/dev/null 2>&1; then
+    echo "ÉXITO: El fichero text.txt se encuentra dentro del sistema de ficheros."
+    umount /VDC/
 else
-    error "El sistema de ficheros de vdc no contiene test.txt, $VOLUMEN."
+    umount /VDC/
+    error "El fichero text.txt no se encuentra dentro del sistema de ficheros."
 fi
 
 echo "Fin de comprobaciones."
